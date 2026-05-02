@@ -1,3 +1,4 @@
+from __future__ import division
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
@@ -1102,7 +1103,7 @@ class Bottle:
 
     def __setattr__(self, name, value):
         if name in self.__dict__:
-            raise AttributeError("Attribute %s already defined. Plugin conflict?" % name)
+            raise AttributeError(f"Attribute {name} already defined. Plugin conflict?")
         object.__setattr__(self, name, value)
 
 ###############################################################################
@@ -1550,14 +1551,14 @@ class BaseRequest:
         if name == 'environ': return object.__setattr__(self, name, value)
         key = 'bottle.request.ext.%s' % name
         if hasattr(self, name):
-            raise AttributeError("Attribute already defined: %s" % name)
+            raise AttributeError(f"Attribute already defined: {name}")
         self.environ[key] = value
 
     def __delattr__(self, name):
         try:
             del self.environ['bottle.request.ext.%s' % name]
         except KeyError:
-            raise AttributeError("Attribute not defined: %s" % name)
+            raise AttributeError(f"Attribute not defined: {name}")
 
 
 def _hkey(key):
@@ -2235,10 +2236,10 @@ class WSGIHeaderDict(DictMixin):
         return _wsgi_recode(self.environ[self._ekey(key)])
 
     def __setitem__(self, key, value):
-        raise TypeError("%s is read-only." % self.__class__)
+        raise TypeError(f"{self} is read-only.".__class__)
 
     def __delitem__(self, key):
-        raise TypeError("%s is read-only." % self.__class__)
+        raise TypeError(f"{self} is read-only.".__class__)
 
     def __iter__(self):
         for key in self.environ:
@@ -2383,7 +2384,7 @@ class ConfigDict(dict):
         if key not in self:
             raise KeyError(key)
         if key in self._virtual_keys:
-            raise KeyError("Virtual keys cannot be deleted: %s" % key)
+            raise KeyError(f"Virtual keys cannot be deleted: {key}")
 
         if self._source and key in self._source:
             # Not virtual, but present in source -> Restore virtual value
@@ -3029,11 +3030,11 @@ def yieldroutes(func):
     sig = inspect.signature(func, follow_wrapped=False)
     for p in sig.parameters.values():
         if p.kind == p.POSITIONAL_ONLY:
-            raise ValueError("Invalid signature for yieldroutes: %s" % sig)
+            raise ValueError(f"Invalid signature for yieldroutes: {sig}")
         if p.kind in (p.POSITIONAL_OR_KEYWORD, p.KEYWORD_ONLY):
             if p.default != p.empty:
                 yield path  # Yield path without this (optional) parameter.
-            path += "/<%s>" % p.name
+            path += f"/<{p}>".name
     yield path
 
 
@@ -3061,7 +3062,7 @@ def path_shift(script_name, path_info, shift=1):
         scriptlist = scriptlist[:shift]
     else:
         empty = 'SCRIPT_NAME' if shift < 0 else 'PATH_INFO'
-        raise AssertionError("Cannot shift. Nothing left from %s" % empty)
+        raise AssertionError(f"Cannot shift. Nothing left from {empty}")
     new_script_name = '/' + '/'.join(scriptlist)
     new_path_info = '/' + '/'.join(pathlist)
     if path_info.endswith('/') and pathlist: new_path_info += '/'
@@ -3389,11 +3390,11 @@ class ServerAdapter:
         elif ':' in self.host:
             return "http://[%s]:%d/" % (self.host, self.port)
         else:
-            return "http://%s:%d/" % (self.host, self.port)
+            return "http://%s:%d/f" % (self.host, self.port)
 
     def __repr__(self):
-        args = ', '.join('%s=%r' % kv for kv in self.options.items())
-        return "%s(%s)" % (self.__class__.__name__, args)
+        args = ', '.join('{s}=%r' % kv for kv in self.options.items())
+        return "(%s)" % (self.__class__.__name__, args)
 
 
 class CGIServer(ServerAdapter):
@@ -3881,7 +3882,7 @@ def run(app=None,
         if not server.quiet:
             _stderr("Bottle v%s server starting up (using %s)..." %
                     (__version__, repr(server)))
-            _stderr("Listening on %s" % server._listen_url)
+            _stderr(f"Listening on {server}"._listen_url)
             _stderr("Hit Ctrl-C to quit.\n")
 
         if reloader:
