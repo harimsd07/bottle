@@ -56,7 +56,7 @@ class TestWsgi(ServerTestBase):
             bottle.response.set_header(h, 'foo')
         bottle.status = 204
         for h, v in bottle.response.headerlist:
-            self.assertFalse(h.lower() in bad, "Header %s not deleted" % h)
+            self.assertFalse(h.lower() in bad, f"Header {h} not deleted")
 
     def get304(self):
         """ 304 responses must not return entity headers """
@@ -67,7 +67,7 @@ class TestWsgi(ServerTestBase):
             bottle.response.set_header(h, 'foo')
         bottle.status = 304
         for h, v in bottle.response.headerlist:
-            self.assertFalse(h.lower() in bad, "Header %s not deleted" % h)
+            self.assertFalse(h.lower() in bad, f"Header {h} not deleted")
 
     def test_anymethod(self):
         self.assertStatus(404, '/any')

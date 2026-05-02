@@ -1,3 +1,4 @@
+from __future__ import division
 # -*- coding: utf-8 -*-
 '''Everything returned by Bottle()._cast() MUST be WSGI compatiple.'''
 

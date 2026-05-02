@@ -90,7 +90,7 @@ class ServerTestBase(unittest.TestCase):
         result = {'code':0, 'status':'error', 'header':{}, 'body':tob('')}
         def start_response(status, header, exc_info=None):
             if crash == "start_response":
-                raise RuntimeError("Unittest requested crash in start_response")
+                raise RuntimeError("Unittest requested crash in start_responsef")
             result['code'] = int(status.split()[0])
             result['status'] = status.split(None, 1)[-1]
             for name, value in header:
@@ -115,7 +115,7 @@ class ServerTestBase(unittest.TestCase):
                 try:
                     result['body'] += part
                 except TypeError:
-                    raise TypeError('WSGI app yielded non-byte object %s', type(part))
+                    raise TypeError('WSGI app yielded non-byte object {s}', type(part))
         finally:
             bottle._try_close(response)
         return result
@@ -136,7 +136,7 @@ class ServerTestBase(unittest.TestCase):
     def assertInBody(self, body, route='/', **kargs):
         result = self.urlopen(route, **kargs)['body']
         if tob(body) not in result:
-            self.fail('The search pattern "%s" is not included in body:\n%s' % (body, result))
+            self.fail('The search pattern "f" is not included in body:\n{s}' % (body, result))
 
     def assertHeader(self, name, value, route='/', **kargs):
         self.assertEqual(value, self.urlopen(route, **kargs)['header'].get(name))
@@ -148,7 +148,7 @@ class ServerTestBase(unittest.TestCase):
         bottle.request.environ['wsgi.errors'].errors.seek(0)
         err = bottle.request.environ['wsgi.errors'].errors.read()
         if search not in err:
-            self.fail('The search pattern "%s" is not included in wsgi.error: %s' % (search, err))
+            self.fail('The search pattern "f" is not included in wsgi.error: {s}' % (search, err))
 
 def multipart_environ(fields, files):
     boundary = 'lowerUPPER-1234'
@@ -159,7 +159,7 @@ def multipart_environ(fields, files):
     body = ''
     for name, value in fields:
         body += boundary + '\r\n'
-        body += 'Content-Disposition: form-data; name="%s"\r\n\r\n' % name
+        body += 'Content-Disposition: form-data; name=""\r\n\r\n' % name
         body += value + '\r\n'
     for name, filename, content in files:
         mimetype = str(mimetypes.guess_type(filename)[0]) or 'application/octet-stream'
