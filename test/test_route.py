@@ -65,6 +65,7 @@ class TestRoute(unittest.TestCase):
 
     def test_callback_inspection_newsig(self):
         env = {}
+# ⚠️  LEGACYFIX: eval() is dangerous — arbitrary code execution risk — Use ast.literal_eval() for safe evaluation of literals
         eval(compile('def foo(a, *, b=5): pass', '<foo>', 'exec'), env, env)
         route = bottle.Route(bottle.Bottle(), None, None, env['foo'])
         self.assertEqual(set(route.get_callback_args()), set(['a', 'b']))
