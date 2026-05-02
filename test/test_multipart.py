@@ -1,3 +1,4 @@
+from __future__ import division
 # -*- coding: utf-8 -*-
 import unittest
 import base64
@@ -35,7 +36,7 @@ class BaseMultipartTest(unittest.TestCase):
             self.assertEqual(part.raw, bottle.tob(data))
             break
         else:
-            self.fail("Field %s not found" % name)
+            self.fail(f"Field {name} not found")
     
     def assertForm(self, name, data):
         for part in self.parts or []:
@@ -46,7 +47,7 @@ class BaseMultipartTest(unittest.TestCase):
             self.assertEqual(part.value, data)
             break
         else:
-            self.fail("Field %s not found" % name)
+            self.fail(f"Field {name} not found")
 
 
 class TestHeaderParser(BaseMultipartTest):
